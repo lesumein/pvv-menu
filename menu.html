@@ -1,0 +1,583 @@
+<title>세븐벤처밸리 주간식단</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #F2F3EF;
+    --surface: #FFFFFF;
+    --ink: #1E241F;
+    --muted: #6B736B;
+    --faint: #9AA29A;
+    --line: #DEE1DA;
+    --accent: #2F6B57;
+    --accent-soft: #E4EDE8;
+    --meal-1: #7A8FA6;
+    --meal-2: #B7642F;
+    --meal-3: #5A4A6B;
+    --serif: "Gowun Batang", "Nanum Myeongjo", serif;
+    --sans: "IBM Plex Sans KR", -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Consolas", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #141714;
+      --surface: #1C201C;
+      --ink: #E8EBE5;
+      --muted: #99A199;
+      --faint: #6E766E;
+      --line: #2E332E;
+      --accent: #74C2A2;
+      --accent-soft: #1F2E28;
+      --meal-1: #8FA6BC;
+      --meal-2: #D0834F;
+      --meal-3: #8E7CA6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #141714;
+    --surface: #1C201C;
+    --ink: #E8EBE5;
+    --muted: #99A199;
+    --faint: #6E766E;
+    --line: #2E332E;
+    --accent: #74C2A2;
+    --accent-soft: #1F2E28;
+    --meal-1: #8FA6BC;
+    --meal-2: #D0834F;
+    --meal-3: #8E7CA6;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: contain;
+  }
+
+  .wrap {
+    max-width: 460px;
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ---- 머리말: 한 줄로 압축 ---- */
+  .top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .top h1 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 1.1;
+    margin: 0;
+    letter-spacing: -.01em;
+  }
+  .top .site {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+
+  /* ---- 요일 ---- */
+  .days {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    user-select: none;
+  }
+  .day {
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 6px 0 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+  }
+  .day b { font-family: var(--serif); font-size: 15px; font-weight: 700; line-height: 1; }
+  .day span {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .day[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--ground);
+  }
+  .day.today:not([aria-pressed="true"]) { border-color: var(--accent); color: var(--accent); }
+  .day:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---- 끼니 탭 ---- */
+  .meals {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--line);
+    user-select: none;
+  }
+  .tab {
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 5px 0 7px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    color: var(--faint);
+  }
+  .tab b {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tab small {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--rail, var(--ink)); }
+  .tab[data-meal="조식"] { --rail: var(--meal-1); }
+  .tab[data-meal="중식"] { --rail: var(--meal-2); }
+  .tab[data-meal="석식"] { --rail: var(--meal-3); }
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+  }
+
+  /* ---- 배식 상태 ---- */
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    min-height: 16px;
+  }
+  .status.live { color: var(--accent); }
+  .status .bar {
+    flex: 1;
+    height: 2px;
+    background: var(--line);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .status .bar > i { display: block; height: 100%; background: var(--accent); }
+
+  /* ---- 메뉴 ---- */
+  main { flex: 1; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+  }
+  .grid.single { grid-template-columns: 1fr; }
+  .col { min-width: 0; }
+  .col-name {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 3px;
+  }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { padding: 2px 0; color: var(--muted); font-size: 14.5px; }
+  li.main {
+    color: var(--ink);
+    font-size: 17.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    padding-bottom: 3px;
+    word-break: keep-all;
+  }
+  .grid.single li { font-size: 15.5px; }
+  .grid.single li.main { font-size: 20px; }
+
+  .extras {
+    grid-column: 1 / -1;
+    border-top: 1px dashed var(--line);
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .extra { font-size: 13.5px; color: var(--muted); }
+  .extra b {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 500;
+    margin-right: 6px;
+  }
+
+  /* ---- 전체 보기 ---- */
+  .all-meal + .all-meal { margin-top: 14px; }
+  .all-head {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    margin-bottom: 5px;
+  }
+  .all-head h2 {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--rail);
+  }
+  .all-meal[data-meal="조식"] { --rail: var(--meal-1); }
+  .all-meal[data-meal="중식"] { --rail: var(--meal-2); }
+  .all-meal[data-meal="석식"] { --rail: var(--meal-3); }
+  .all-head small { font-family: var(--mono); font-size: 10px; color: var(--faint); }
+
+  /* ---- 꼬리말 ---- */
+  details {
+    font-size: 11.5px;
+    color: var(--faint);
+    border-top: 1px solid var(--line);
+    padding-top: 9px;
+  }
+  summary {
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .07em;
+    color: var(--muted);
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "＋ "; }
+  details[open] summary::before { content: "－ "; }
+  summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  details p { margin: 7px 0 0; line-height: 1.45; word-break: break-all; }
+  details p.takeout { color: var(--muted); }
+  .stale {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--meal-2);
+    margin: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1 id="title"></h1>
+    <span class="site" id="site"></span>
+  </header>
+
+  <nav class="days" id="days" aria-label="요일"></nav>
+
+  <div class="meals" id="tabs" role="tablist" aria-label="끼니"></div>
+
+  <p class="status" id="status"></p>
+
+  <main id="menu"></main>
+
+  <details id="info">
+    <summary>Take Out · 원산지 · 출처</summary>
+    <div id="info-body"></div>
+  </details>
+</div>
+
+<script>
+  var WEEK = {"title":"9월 1주차) 주간메뉴안내","site":"판교세븐벤처밸리점","source":"판교 9월1주차식단표(1).pdf","fetched":"2026-09-02","takeout":"샌드위치 & 프리미엄 웰선식 & 하림닭가슴살 & 비요뜨 & 라면 등 ★조,중,석식 이용가능합니다★","origin":["밥,누룽지,쌀-쌀:국내산 / 현미밥:현미-국내산 / 배추김치(배식용)-배추:중국산,고추분:중국산 / 맛김치-배추:국내산,고추분:중국산(*국내산용 따로비치)","맛김치(조리용)-배추:중국산,고추분:중국산 /두부,연두부,순두부-대두:외국산 / 닭가슴살-계육:국내산","※그 외 원산지표시는 오늘의 메뉴표를 참고하세요.","고객님을 위해 활짝 열린 식단 연락처 E-mail : e10712566@harim.com"],"days":[{"date":"2026-08-31","label":"8월 31일","weekday":"월","meals":[{"name":"조식","time":"07:30~09:00","corners":[{"name":null,"items":["콩비지찌개","현미밥/쌀밥/누룽지","완자떡조림","청포묵김무침","깍두기","셀프계란후라이&토스트&커피&우유"]}]},{"name":"중식","time":"11:30~13:10","corners":[{"name":"A코너","items":["치킨마요덮밥","미소장국","야채쫄면","수제피클"]},{"name":"B코너","items":["버섯불고기","차조밥/다시마무채국","매콤어묵볶음","고들빼기지"]},{"name":"셀프코너","items":["포기김치/깍두기","그린샐러드*연유/오리엔탈D","셀프비빔밥"]},{"name":"SALAD BOX","items":["에그샌드위치 샐러드"]}]},{"name":"석식","time":"17:40~18:50","corners":[{"name":null,"items":["뚝)돈육김치찌개","혼합잡곡밥","계란후라이&비엔나","숙주나물","건파래볶음","깍두기"]}]}]},{"date":"2026-09-01","label":"9월 01일","weekday":"화","meals":[{"name":"조식","time":"07:30~09:00","corners":[{"name":null,"items":["닭개장*당면사리","현미밥/쌀밥/누룽지","동그랑땡전","양파초절이","깍두기","셀프계란후라이&토스트&커피&우유"]}]},{"name":"중식","time":"11:30~13:10","corners":[{"name":"A코너","items":["미트볼스파게티","후리가케밥/크림스프","해쉬브라운","할라피뇨오이피클"]},{"name":"B코너","items":["시래기묵은지밥","홍합무국","언양식떡갈비","구운김"]},{"name":"셀프코너","items":["포기김치/깍두기","그린샐러드*참깨/오리엔탈D","셀프비빔밥"]},{"name":"SALAD BOX","items":["참치포케 샐러드"]}]},{"name":"석식","time":"17:40~18:50","corners":[{"name":null,"items":["차돌강된장덮밥","들깨미역국","메밀전병","가지나물","포기김치","매실차"]}]}]},{"date":"2026-09-02","label":"9월 02일","weekday":"수","meals":[{"name":"조식","time":"07:30~09:00","corners":[{"name":null,"items":["꽃게된장찌개","현미밥/쌀밥/누룽지","소시지야채볶음","들깨무나물","포기김치","셀프계란후라이&토스트&커피&우유"]}]},{"name":"중식","time":"11:30~13:10","corners":[{"name":"A코너","items":["돈까스&마늘볶음밥","가쓰오장국","웨지감자*케찹","실곤약야채무침"]},{"name":"B코너","items":["제육덮밥*김가루","얼갈이된장국","옛날햄전","부추콩나물무침"]},{"name":"셀프코너","items":["포기김치/깍두기","그린샐러드*유자/오리엔탈D","요구르트"]},{"name":"SALAD BOX","items":["블루베리베이글 샐러드"]}]},{"name":"석식","time":"17:40~18:50","corners":[{"name":null,"items":["얼큰샤브칼국수","추가밥","찐만두","오이부추무침","포기김치","양배추샐러드"]}]}]},{"date":"2026-09-03","label":"9월 03일","weekday":"목","meals":[{"name":"조식","time":"07:30~09:00","corners":[{"name":null,"items":["호박고추장찌개","현미밥/쌀밥/누룽지","계란찜","간장깻잎지","포기김치","셀프계란후라이&토스트&커피&우유"]}]},{"name":"중식","time":"11:30~13:10","corners":[{"name":"A코너","items":["고기짬뽕","추가밥","간장탕수육","단무지무침"]},{"name":"B코너","items":["에비동","팽이장국","고추어묵바","락교무침"]},{"name":"셀프코너","items":["포기김치/깍두기","그린샐러드*키위/오리엔탈D","셀프비빔밥"]},{"name":"SALAD BOX","items":["바질파스타 샐러드"]}]},{"name":"석식","time":"17:40~18:50","corners":[{"name":null,"items":["간장찜닭","혼합잡곡밥","콩가루배추국","매콤두부조림","무말랭이무침","포기김치"]}]}]},{"date":"2026-09-04","label":"9월 04일","weekday":"금","meals":[{"name":"조식","time":"07:30~09:00","corners":[{"name":null,"items":["소고기미역국","현미밥/쌀밥/누룽지","햄감자조림","마늘쫑볶음","깍두기","셀프계란후라이&토스트&커피&우유"]}]},{"name":"중식","time":"11:30~13:10","corners":[{"name":"A코너","items":["사골떡만두국","추가밥","고기산적조림","도토리묵야채무침"]},{"name":"B코너","items":["참치김치덮밥*계란후라이","콩나물국","생선커틀렛","그린빈스볶음"]},{"name":"셀프코너","items":["포기김치/깍두기","그린샐러드*흑임자/오리엔탈D","셀프비빔밥"]},{"name":"SALAD BOX","items":["잉글리시머핀 샐러드"]}]},{"name":"석식","time":"17:40~18:50","corners":[{"name":null,"items":["우거지해장국","혼합잡곡밥","감자완자전","새우젓호박볶음","깍두기","수정과"]}]}]}]};
+
+  var $ = function (id) { return document.getElementById(id); };
+  var COLUMNS = ["A코너", "B코너"];      /* 실제로 줄을 서서 고르는 두 코너 */
+  var state = { day: 0, meal: null, pinned: false, today: -1 };
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function mins(hhmm) {
+    var p = hhmm.split(":");
+    return parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
+  }
+  function span(meal) {
+    var t = /(\d{1,2}:\d{2})~(\d{1,2}:\d{2})/.exec(meal.time || "");
+    return t ? { from: mins(t[1]), to: mins(t[2]), from_: t[1], to_: t[2] } : null;
+  }
+  function nowMin() {
+    var d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  }
+
+  /* 지금 배식중인 끼니 이름. 없으면 null */
+  function liveMeal(day) {
+    var m = nowMin(), hit = null;
+    day.meals.forEach(function (meal) {
+      var s = span(meal);
+      if (s && m >= s.from && m < s.to) hit = meal.name;
+    });
+    return hit;
+  }
+
+  /* 처음 열었을 때 보여줄 끼니: 배식중 > 다음 배식 > 중식 */
+  function defaultMeal(day, isToday) {
+    if (!isToday) return "중식";
+    var live = liveMeal(day);
+    if (live) return live;
+    var m = nowMin(), next = null;
+    day.meals.forEach(function (meal) {
+      var s = span(meal);
+      if (s && m < s.from && !next) next = meal.name;
+    });
+    return next || "중식";
+  }
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function mealOf(day, name) {
+    return day.meals.filter(function (m) { return m.name === name; })[0];
+  }
+
+  /* 한 끼니를 2열(A/B코너) 또는 1열로 그린다 */
+  function mealGrid(meal, compact) {
+    var cols = meal.corners.filter(function (c) {
+      return !c.name || COLUMNS.indexOf(c.name) >= 0;
+    });
+    var extras = meal.corners.filter(function (c) {
+      return c.name && COLUMNS.indexOf(c.name) < 0;
+    });
+
+    var grid = el("div", "grid" + (cols.length < 2 ? " single" : ""));
+    cols.forEach(function (c) {
+      var box = el("div", "col");
+      if (c.name) box.appendChild(el("div", "col-name", c.name));
+      var ul = el("ul");
+      c.items.forEach(function (item, i) {
+        ul.appendChild(el("li", i === 0 && !compact ? "main" : null, item));
+      });
+      box.appendChild(ul);
+      grid.appendChild(box);
+    });
+
+    if (extras.length) {
+      var wrap = el("div", "extras");
+      extras.forEach(function (c) {
+        var row = el("div", "extra");
+        row.appendChild(el("b", null, c.name));
+        row.appendChild(document.createTextNode(c.items.join(" · ")));
+        wrap.appendChild(row);
+      });
+      grid.appendChild(wrap);
+    }
+    return grid;
+  }
+
+  function renderStatus(day, isToday) {
+    var box = $("status");
+    box.textContent = "";
+    box.className = "status";
+    if (!isToday) {
+      box.appendChild(document.createTextNode(day.label + " " + day.weekday + "요일"));
+      return;
+    }
+    var live = liveMeal(day), m = nowMin();
+    if (live) {
+      var s = span(mealOf(day, live));
+      var left = s.to - m;
+      box.className = "status live";
+      box.appendChild(document.createTextNode(live + " 배식중"));
+      var bar = el("div", "bar");
+      var fill = el("i");
+      fill.style.width = ((m - s.from) / (s.to - s.from) * 100).toFixed(1) + "%";
+      bar.appendChild(fill);
+      box.appendChild(bar);
+      box.appendChild(document.createTextNode(
+        (left >= 60 ? Math.floor(left / 60) + "시간 " : "") + (left % 60) + "분 남음"));
+      return;
+    }
+    var next = null;
+    day.meals.forEach(function (meal) {
+      var sp = span(meal);
+      if (sp && m < sp.from && !next) next = { name: meal.name, at: sp.from_ };
+    });
+    box.appendChild(document.createTextNode(
+      next ? "다음 배식 " + next.name + " " + next.at : "오늘 배식 종료"));
+  }
+
+  function renderTabs(day, isToday) {
+    var bar = $("tabs");
+    bar.textContent = "";
+    var live = isToday ? liveMeal(day) : null;
+
+    day.meals.forEach(function (meal) {
+      var t = el("button", "tab");
+      t.type = "button";
+      t.setAttribute("role", "tab");
+      t.setAttribute("data-meal", meal.name);
+      t.setAttribute("aria-selected", meal.name === state.meal ? "true" : "false");
+      var b = el("b");
+      b.appendChild(document.createTextNode(meal.name));
+      if (meal.name === live) b.appendChild(el("span", "dot"));
+      t.appendChild(b);
+      var s = span(meal);
+      t.appendChild(el("small", null, s ? s.from_ : ""));
+      t.addEventListener("click", function () {
+        state.meal = meal.name;
+        state.pinned = true;
+        draw();
+      });
+      bar.appendChild(t);
+    });
+
+    var all = el("button", "tab");
+    all.type = "button";
+    all.setAttribute("role", "tab");
+    all.setAttribute("aria-selected", state.meal === "전체" ? "true" : "false");
+    all.appendChild(el("b", null, "전체"));
+    all.appendChild(el("small", null, "하루"));
+    all.addEventListener("click", function () {
+      state.meal = "전체";
+      state.pinned = true;
+      draw();
+    });
+    bar.appendChild(all);
+  }
+
+  function draw() {
+    var day = WEEK.days[state.day];
+    var isToday = state.day === state.today;
+
+    if (!state.pinned) state.meal = defaultMeal(day, isToday);
+    if (state.meal !== "전체" && !mealOf(day, state.meal)) state.meal = day.meals[0].name;
+
+    Array.prototype.forEach.call($("days").children, function (b, i) {
+      b.setAttribute("aria-pressed", i === state.day ? "true" : "false");
+    });
+    renderTabs(day, isToday);
+    renderStatus(day, isToday);
+
+    var root = $("menu");
+    root.textContent = "";
+    if (state.meal === "전체") {
+      day.meals.forEach(function (meal) {
+        var sec = el("section", "all-meal");
+        sec.setAttribute("data-meal", meal.name);
+        var head = el("div", "all-head");
+        head.appendChild(el("h2", null, meal.name));
+        head.appendChild(el("small", null, meal.time));
+        sec.appendChild(head);
+        sec.appendChild(mealGrid(meal, true));
+        root.appendChild(sec);
+      });
+    } else {
+      root.appendChild(mealGrid(mealOf(day, state.meal), false));
+    }
+  }
+
+  function boot() {
+    $("title").textContent = WEEK.title.replace(/\).*$/, "").trim() + " 식단";
+    $("site").textContent = WEEK.site;
+
+    var body = $("info-body");
+    if (WEEK.takeout) {
+      var p = el("p", "takeout", "Take Out · " + WEEK.takeout);
+      body.appendChild(p);
+    }
+    (WEEK.origin || []).forEach(function (line) { body.appendChild(el("p", null, line)); });
+    body.appendChild(el("p", null, "출처 " + WEEK.source + " · pvv.co.kr 게시판 최신 첨부"));
+
+    var d = new Date();
+    var iso = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+    state.today = WEEK.days.map(function (x) { return x.date; }).indexOf(iso);
+    state.day = state.today >= 0 ? state.today : 0;
+
+    if (state.today < 0) {
+      var note = el("p", "stale", "오늘(" + iso + ")은 이 주간표에 없습니다. 새 표가 올라왔는지 확인하세요.");
+      $("menu").before(note);
+    }
+
+    var nav = $("days");
+    WEEK.days.forEach(function (day, i) {
+      var b = el("button", "day" + (i === state.today ? " today" : ""));
+      b.type = "button";
+      var parts = day.date.split("-");
+      b.appendChild(el("b", null, day.weekday));
+      b.appendChild(el("span", null, parseInt(parts[1], 10) + "/" + parseInt(parts[2], 10)));
+      b.addEventListener("click", function () { state.day = i; draw(); });
+      nav.appendChild(b);
+    });
+
+    nav.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      move(e.key === "ArrowRight" ? 1 : -1);
+      nav.children[state.day].focus();
+      e.preventDefault();
+    });
+
+    /* 폰에서는 좌우 스와이프로 날짜 이동 */
+    var x0 = null, y0 = null;
+    document.addEventListener("touchstart", function (e) {
+      x0 = e.touches[0].clientX;
+      y0 = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener("touchend", function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0;
+      var dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.6) move(dx < 0 ? 1 : -1);
+      x0 = null;
+    }, { passive: true });
+
+    function move(step) {
+      state.day = (state.day + step + WEEK.days.length) % WEEK.days.length;
+      draw();
+    }
+
+    draw();
+    /* 배식 상태는 분 단위로만 바뀐다. 사용자가 탭을 직접 고른 뒤엔 건드리지 않는다 */
+    setInterval(draw, 60000);
+  }
+
+  boot();
+</script>
