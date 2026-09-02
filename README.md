@@ -31,7 +31,7 @@ python menu.py --html     # menu.html 생성 (Claude 아티팩트용, head 없�
 ```
 
 디자인은 `menu_template.html` 하나에만 있다. `/*__MENU_DATA__*/null` 자리에 주간 데이터가 주입된다.
-아이콘을 다시 만들려면 `python make_icons.py`.
+아이콘·공유 이미지를 다시 만들려면 `python make_assets.py`.
 
 ## 구성
 
@@ -41,6 +41,7 @@ python menu.py --html     # menu.html 생성 (Claude 아티팩트용, head 없�
 | `menu_template.html` | 페이지 디자인 (단일 소스) |
 | `index.html` | 생성물. Pages가 서빙 |
 | `sw.js`, `manifest.webmanifest`, `icons/` | PWA 설치 · 오프라인 |
+| `make_assets.py`, `og-image.png` | 앱 아이콘 · 링크 공유 미리보기 이미지 |
 | `.github/workflows/update-menu.yml` | 매주 월요일 07:00 KST 자동 갱신 |
 
 ## 한계

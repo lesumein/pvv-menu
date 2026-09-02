@@ -1,6 +1,6 @@
 /* 오프라인에서도 지난번에 본 식단이 뜨게 하는 최소 서비스워커.
    식단은 주 1회만 바뀌므로, 페이지는 네트워크 우선 + 캐시 폴백이면 충분하다. */
-var CACHE = "pvv-menu-v2";
+var CACHE = "pvv-menu-v4";
 var SHELL = [
   "./",
   "./index.html",

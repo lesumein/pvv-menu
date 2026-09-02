@@ -170,10 +170,22 @@ SHELL = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F2F3EF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141714" media="(prefers-color-scheme: dark)">
-<meta name="description" content="판교세븐벤처밸리점 주간 식단표">
+<meta name="description" content="판교세븐벤처밸리점 주간 식단표. 지금 배식중인 끼니를 바로 확인하세요.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="식단">
+<meta name="apple-mobile-web-app-title" content="식단표">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="판교세븐벤처밸리 식단표">
+<meta property="og:title" content="판교세븐벤처밸리 주간 식단표">
+<meta property="og:description" content="지금 배식중인 끼니를 바로 확인하세요. 조·중·석식, 매주 자동 업데이트.">
+<meta property="og:url" content="https://pvv-menu.sumi.kr/">
+<meta property="og:image" content="https://pvv-menu.sumi.kr/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="판교세븐벤처밸리 주간 식단표">
+<meta name="twitter:description" content="지금 배식중인 끼니를 바로 확인하세요. 조·중·석식, 매주 자동 업데이트.">
+<meta name="twitter:image" content="https://pvv-menu.sumi.kr/og-image.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" href="icons/icon-192.png">
