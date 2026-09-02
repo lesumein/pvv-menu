@@ -316,6 +316,46 @@
     margin: 0;
   }
 
+  /* ---- 설치 ---- */
+  .install {
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    padding: 11px 14px;
+    color: var(--ground);
+    background: var(--accent);
+    border: 0;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .install-icon {
+    font-family: var(--mono);
+    font-size: 16px;
+    line-height: 1;
+  }
+  .install:active { opacity: .85; }
+  .install:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  .install-hint {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    word-break: keep-all;
+  }
+  .install-hint b { color: var(--ink); font-weight: 600; }
+
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
   }
@@ -339,6 +379,12 @@
     <summary>Take Out · 원산지 · 출처</summary>
     <div id="info-body"></div>
   </details>
+
+  <button type="button" class="install" id="install" hidden>
+    <span class="install-icon" aria-hidden="true">＋</span>
+    <span id="install-label">홈 화면에 앱으로 추가</span>
+  </button>
+  <p class="install-hint" id="install-hint" hidden></p>
 </div>
 
 <script>
@@ -596,7 +642,46 @@
     setInterval(draw, 60000);
   }
 
+  /* 설치 안내.
+     Android/데스크톱 Chrome은 beforeinstallprompt로 직접 설치 버튼을 띄운다.
+     iOS Safari는 이 이벤트가 없어 '공유 → 홈 화면에 추가'를 글로 안내한다. */
+  function setupInstall() {
+    var btn = $("install"), hint = $("install-hint"), label = $("install-label");
+    var standalone = matchMedia("(display-mode: standalone)").matches
+      || navigator.standalone === true;
+    if (standalone) return;  // 이미 앱으로 실행 중
+
+    var deferred = null;
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      deferred = e;
+      hint.hidden = true;
+      btn.hidden = false;
+    });
+    btn.addEventListener("click", function () {
+      if (!deferred) return;
+      deferred.prompt();
+      deferred.userChoice.finally(function () {
+        deferred = null;
+        btn.hidden = true;
+      });
+    });
+    window.addEventListener("appinstalled", function () { btn.hidden = true; });
+
+    var ua = navigator.userAgent;
+    var iOS = /iP(hone|ad|od)/.test(ua)
+      || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    if (iOS) {
+      var safari = /Safari/.test(ua) && !/(CriOS|FxiOS|EdgiOS|Whale|NAVER)/.test(ua);
+      hint.innerHTML = safari
+        ? "이 화면 아래 <b>공유</b> 버튼 → <b>홈 화면에 추가</b>를 누르면 앱처럼 설치됩니다."
+        : "<b>Safari</b>로 이 페이지를 연 뒤 <b>공유 → 홈 화면에 추가</b>를 누르세요. (iOS는 Safari에서만 설치됩니다)";
+      hint.hidden = false;
+    }
+  }
+
   boot();
+  setupInstall();
 </script>
 
 <script>
