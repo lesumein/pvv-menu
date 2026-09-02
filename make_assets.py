@@ -68,20 +68,24 @@ def fit_font(d, text, bold, max_w, start):
 
 
 def make_icon(size, ss=4):
-    """maskable 안전영역(가운데 80% 원) 안에만 내용을 둔다.
-    배경은 전체를 꽉 채워(둥근 모서리 없이) OS 마스크가 모양을 잡게 한다.
-    긴 장소명은 잘리고 홈 라벨과 중복이라 넣지 않는다."""
+    """크림 V2: 크림 바탕 + 세븐밸리(아이브로우) + 식단표 + 잎 + 초록 밑줄.
+    배경은 전체를 꽉 채우고(둥근 모서리는 OS 마스크가 처리), 내용은 모두
+    maskable 안전영역(가운데 80% 원) 안에 두어 설치 시 잘리지 않게 한다."""
     S = size * ss
-    img = Image.new("RGBA", (S, S), BROWN)   # 전체 채움(마스킹 대비)
-    # 잎: 상단 중앙
-    lf = leaf(int(S * 0.24), angle=32)
-    img.alpha_composite(lf, (int(S / 2 - lf.width / 2), int(S * 0.24)))
+    img = Image.new("RGBA", (S, S), CREAM)   # 전체 채움(마스킹 대비)
     d = ImageDraw.Draw(img)
-    # 식단표: 중앙, 폭 62% 안에 들어오게
-    f = fit_font(d, "식단표", True, S * 0.62, int(S * 0.30))
-    d.text((S / 2, S * 0.585), "식단표", font=f, fill=CREAM, anchor="mm")
+    # 아이브로우: 세븐밸리 (진한 갈색으로 또렷하게)
+    eb = fit_font(d, "세븐밸리", False, S * 0.52, int(S * 0.105))
+    d.text((S / 2, S * 0.305), "세븐밸리", font=eb, fill=BROWN2, anchor="mm")
+    # 식단표: 중앙(잎 자리 위해 살짝 왼쪽), 폭 58% 안
+    f = fit_font(d, "식단표", True, S * 0.58, int(S * 0.25))
+    d.text((S * 0.455, S * 0.55), "식단표", font=f, fill=BROWN, anchor="mm")
+    # 잎: 제목 오른쪽 위
+    lf = leaf(int(S * 0.185), angle=35)
+    img.alpha_composite(lf, (int(S * 0.72 - lf.width / 2), int(S * 0.44 - lf.height / 2)))
+    d = ImageDraw.Draw(img)
     # 초록 밑줄 (안전영역 안)
-    d.rounded_rectangle([S * 0.35, S * 0.71, S * 0.65, S * 0.745], S * 0.017, fill=LEAF)
+    d.rounded_rectangle([S * 0.34, S * 0.70, S * 0.66, S * 0.735], S * 0.017, fill=LEAF)
     return img.resize((size, size), Image.LANCZOS)
 
 
