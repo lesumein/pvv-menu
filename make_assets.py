@@ -68,21 +68,20 @@ def fit_font(d, text, bold, max_w, start):
 
 
 def make_icon(size, ss=4):
+    """maskable 안전영역(가운데 80% 원) 안에만 내용을 둔다.
+    배경은 전체를 꽉 채워(둥근 모서리 없이) OS 마스크가 모양을 잡게 한다.
+    긴 장소명은 잘리고 홈 라벨과 중복이라 넣지 않는다."""
     S = size * ss
-    img = tile(S, CREAM)
+    img = Image.new("RGBA", (S, S), BROWN)   # 전체 채움(마스킹 대비)
+    # 잎: 상단 중앙
+    lf = leaf(int(S * 0.24), angle=32)
+    img.alpha_composite(lf, (int(S / 2 - lf.width / 2), int(S * 0.24)))
     d = ImageDraw.Draw(img)
-    inner = S * 0.72
-    # 상단: 장소 풀네임 (폭에 맞춰 자동 축소)
-    eb = fit_font(d, "판교세븐벤처밸리", False, inner, int(S * 0.095))
-    d.text((S / 2, S * 0.235), "판교세븐벤처밸리", font=eb, fill=BROWN2, anchor="mm")
-    # 중앙: 식단표 + 잎
-    d.text((S * 0.455, S * 0.52), "식단표", font=font(True, int(S * 0.25)),
-           fill=BROWN, anchor="mm")
-    lf = leaf(int(S * 0.20), angle=35)
-    img.alpha_composite(lf, (int(S * 0.72), int(S * 0.35)))
-    d = ImageDraw.Draw(img)
-    # 하단: 초록 밑줄
-    d.rounded_rectangle([S * 0.30, S * 0.70, S * 0.70, S * 0.735], S * 0.017, fill=LEAF)
+    # 식단표: 중앙, 폭 62% 안에 들어오게
+    f = fit_font(d, "식단표", True, S * 0.62, int(S * 0.30))
+    d.text((S / 2, S * 0.585), "식단표", font=f, fill=CREAM, anchor="mm")
+    # 초록 밑줄 (안전영역 안)
+    d.rounded_rectangle([S * 0.35, S * 0.71, S * 0.65, S * 0.745], S * 0.017, fill=LEAF)
     return img.resize((size, size), Image.LANCZOS)
 
 
