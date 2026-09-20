@@ -2,8 +2,10 @@ name: 식단 갱신
 
 on:
   schedule:
-    # 매주 월요일 07:00 KST (일요일 22:00 UTC)
-    - cron: "0 22 * * 0"
+    # 매주 토요일 07:30 KST (금요일 22:30 UTC)
+    # 다음 주 표는 금요일까지 올라오므로 토요일에 받으면 월요일엔 이미 최신.
+    # 분을 :00에서 비켜 GitHub Actions 큐 지연을 줄임.
+    - cron: "30 22 * * 5"
   workflow_dispatch:
 
 permissions:
